@@ -142,13 +142,12 @@ saver.save(sess,os.path.join(LOG_DIR,'model.ckpt'),1)
 
 
 #定义 helper functions
-"""
-**create_sprite_image:** 将 sprits 整齐地对齐在方形画布上
-**vector_to_matrix_mnist:** 将 MNIST 的 vector 数据形式转化为 images
-**invert_grayscale: **将黑背景变为白背景
-"""
+
 def create_sprite_image(images):
-    """Returns a sprite image consisting of images passed as argument. Images should be count x width x height"""
+    """
+    Returns a sprite image consisting of images passed as argument. Images should be count x width x height
+    将 sprits 整齐地对齐在方形画布上
+    """
     if isinstance(images, list):
         images = np.array(images)
     img_h = images.shape[1]
@@ -169,16 +168,22 @@ def create_sprite_image(images):
     return spriteimage
 
 def vector_to_matrix_mnist(mnist_digits):
-    """Reshapes normal mnist digit (batch,28*28) to matrix (batch,28,28)"""
+    """
+    Reshapes normal mnist digit (batch,28*28) to matrix (batch,28,28)
+    将 MNIST 的 vector 数据形式转化为 images
+    
+    """
     return np.reshape(mnist_digits,(-1,28,28))
 
 def invert_grayscale(mnist_digits):
-    """ Makes black white, and white black """
+    """ 
+    Makes black white, and white black 
+    将黑背景变为白背景
+    """
     return 1-mnist_digits
 
 
 #保存 sprite image:将 vector 转换为 images，反转灰度，并创建并保存 sprite image
-
 to_visualise = batch_xs
 to_visualise = vector_to_matrix_mnist(to_visualise)
 to_visualise = invert_grayscale(to_visualise)
