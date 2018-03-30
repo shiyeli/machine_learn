@@ -103,3 +103,5 @@ ENV/
 logs/
 
 saver_save_dir/
+
+inception_logs/
