@@ -3,6 +3,9 @@
 # Created by yetongxue<yeli.studio@qq.com> 
 # 2018/3/28
 
+#循环神经网络识别手写数字
+
+
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
@@ -56,7 +59,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-    for epoch in range(5):
+    for epoch in range(10):
         for batch in range(n_batch):
             batch_xs, batch_ys = mnist.train.next_batch(batch_size)
             sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys})
@@ -65,9 +68,16 @@ with tf.Session() as sess:
         print('Tter %s,Test accuracy:%s' % (epoch, acc))
 
 """
-Tter 0,Test accuracy:0.6695
-Tter 1,Test accuracy:0.8293
-Tter 2,Test accuracy:0.878
-Tter 3,Test accuracy:0.9005
-Tter 4,Test accuracy:0.9048
+Tter 0,Test accuracy:0.6917
+Tter 1,Test accuracy:0.8351
+Tter 2,Test accuracy:0.8732
+Tter 3,Test accuracy:0.9042
+Tter 4,Test accuracy:0.918
+Tter 5,Test accuracy:0.9251
+Tter 6,Test accuracy:0.9307
+Tter 7,Test accuracy:0.9337
+Tter 8,Test accuracy:0.9368
+Tter 9,Test accuracy:0.9438
+
+Process finished with exit code 0
 """
