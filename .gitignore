@@ -104,4 +104,6 @@ logs/
 
 saver_save_dir/
 
-inception_logs/
+inception_model/
+
+inception_log/
