@@ -8,13 +8,12 @@
 
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
-import os
+import tools,os
+
+
+LOG_DIR=tools.makedir_logs(os.path.basename(__file__)[:-3])
 
 mnist=input_data.read_data_sets('MNIST_data',one_hot=True)
-
-
-#模型保存路径
-BASE_PATH=os.path.join(os.getcwd(),'saver_save_dir')
 
 #输入图片规格28x28
 #输入一行，一行有28个数据
@@ -67,25 +66,28 @@ saver=tf.train.Saver()
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-    # for epoch in range(10):
-    #     for batch in range(n_batch):
-    #         batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-    #         sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys})
-    #
-    #     acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels})
-    #     print('Tter %s,Test accuracy:%s' % (epoch, acc))
-    #
-    #
-    # # 模型保存
-    SAVE_PATH=os.path.join(BASE_PATH,'my_rnn_net.ckpt')
-    # saver.save(sess,SAVE_PATH)
 
-    acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels})
-    print(acc)
-    #模型恢复
-    saver.restore(sess,SAVE_PATH)
-    acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels})
-    print(acc)
+    # TODO:模型保存设置为True,恢复测试设置为False
+    SAVE_PATH = os.path.join(LOG_DIR, 'my_rnn_net.ckpt')
+    
+    if False:
+        for epoch in range(10):
+            for batch in range(n_batch):
+                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+                sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys})
+        
+            acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels})
+            print('Tter %s,Test accuracy:%s' % (epoch, acc))
+        
+        # 模型保存
+        saver.save(sess,SAVE_PATH)
+    else:#模型恢复
+        acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels})
+        print('Accuracy of before restore:{}'.format(acc))
+    
+        saver.restore(sess,SAVE_PATH)
+        acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels})
+        print('Accuracy of after restore:{}'.format(acc))
 
 """
 训练结果

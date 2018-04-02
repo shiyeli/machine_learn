@@ -9,10 +9,18 @@ from tensorflow.contrib.tensorboard.plugins import projector
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import tools
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-LOG_DIR=os.path.join(os.getcwd(),'logs')
+LOG_DIR=tools.makedir_logs(os.path.basename(__file__)[:-3])
+
+
+#清空logs下的文件
+for root,dirs,files in os.walk(LOG_DIR,True):
+	for f in files:
+		os.remove(os.path.join(root,f))
+		
+
 
 
 NAME_TO_VISUALISE_VARIABLE = "mnistembedding"
@@ -23,10 +31,7 @@ path_for_mnist_sprites =  os.path.join(LOG_DIR,'mnistdigits.png')
 path_for_mnist_metadata =  os.path.join(LOG_DIR,'metadata.tsv')
 
 
-#清空logs下的文件
-for root,dirs,files in os.walk(LOG_DIR,True):
-	for f in files:
-		os.remove(os.path.join(root,f))
+
 
 
 

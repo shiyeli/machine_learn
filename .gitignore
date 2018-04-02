@@ -101,9 +101,3 @@ ENV/
 .mypy_cache/
 
 logs/
-
-saver_save_dir/
-
-inception_model/
-
-inception_log/
