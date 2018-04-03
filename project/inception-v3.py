@@ -90,7 +90,7 @@ class NodeLookup(object):
             if line.startswith('  target_class_string:'):
                 #获取uid
                 target_class_string=line.split(':')[1].split('"')[1]
-            node_id_to_uid[target_class]=target_class_string
+                node_id_to_uid[target_class]=target_class_string
         
         
         #将上面两个字典通过n15075141建立889与organism, being的链接
@@ -132,27 +132,70 @@ with tf.Session() as sess:
         graph_def.ParseFromString(f.read())
         tf.import_graph_def(graph_def,name='')
         
-    #保存图结构
+    #保存图结构：保存之前将之前保存的events.out.tfevents......iMac文件删除
+    tools.delete_dir_file(LOG_DIR,'iMac')
+    
     writer=tf.summary.FileWriter(LOG_DIR,sess.graph)
     writer.close()
-    
-    #下载的验证图片存放在/Users/yexianyong/Downloads/images              
-    import math,numpy
-        
-    VERIFY_IMAGE_PATH='/Users/yexianyong/Downloads/images'         
-    for root,dirs,files in os.walk(VERIFY_IMAGE_PATH):     
-        count=len(files)
-        fig,axs=plt.subplots(math.ceil(count/4.0),4)
-        plt.set_axs_off=True
-        axs_1d=numpy.array(axs).flat
-        for i in range(count):
-            file=files[i]
-            img=mpimage.imread(os.path.join(root,file))
-            ax=axs_1d[i]
-            ax.set_axis_off()
-            ax.imshow(img)
-		
-        plt.show()
+
+
         
             
-        
+###############使用inception-v3识别图片###################
+import numpy
+
+VERIFY_IMAGE_PATH = '/Users/yexianyong/Downloads/images'
+
+with tf.Session() as sess:
+    softmax_tensor=sess.graph.get_tensor_by_name('softmax:0')
+
+    node_lookup = NodeLookup()
+    #载入图片
+    for root, dirs, files in os.walk(VERIFY_IMAGE_PATH):
+        for f in files:
+            image_data=tf.gfile.FastGFile(os.path.join(root,f),'rb').read()
+            predixtions=sess.run(softmax_tensor,{'DecodeJpeg/contents:0':image_data})
+            predixtions=numpy.squeeze(predixtions)
+            
+            top_ks=predixtions.argsort()[-5:][::-1]
+            node_id=top_ks[0]
+            description_string = node_lookup.id_to_description(node_id)
+            score = predixtions[node_id]
+            print('Pic is {},Identified as {},and the score is:{}'.format(f, description_string, score))
+
+
+#############查看测试图片################
+# 下载的验证图片存放在/Users/yexianyong/Downloads/images
+import math
+
+
+for root, dirs, files in os.walk(VERIFY_IMAGE_PATH):
+    count = len(files)
+    fig, axs = plt.subplots(math.ceil(count / 4.0), 4)
+    axs_1d = numpy.array(axs).flat
+    for i in range(count):
+        file = files[i]
+        img = mpimage.imread(os.path.join(root, file))
+        ax = axs_1d[i]
+        ax.set_axis_off()
+        ax.imshow(img)
+ 
+    plt.show()
+
+
+######################识别结果######################
+"""
+Pic is big_breast_girl.jpeg,Identified as maillot,and the score is:0.4343317151069641
+Pic is cat.jpeg,Identified as Egyptian cat,and the score is:0.31411173939704895
+Pic is cat_and_dog.jpeg,Identified as golden retriever,and the score is:0.8292165398597717
+Pic is dog.jpeg,Identified as Pomeranian,and the score is:0.8750643730163574
+Pic is egg.jpeg,Identified as balance beam, beam,and the score is:0.1599457710981369
+Pic is female.jpeg,Identified as diaper, nappy, napkin,and the score is:0.26608550548553467
+Pic is flower.jpeg,Identified as pot, flowerpot,and the score is:0.7364047169685364
+Pic is monkey.jpeg,Identified as langur,and the score is:0.6609277725219727
+Pic is police.jpeg,Identified as scuba diver,and the score is:0.31524330377578735
+Pic is rabbit.jpeg,Identified as Angora, Angora rabbit,and the score is:0.6405506730079651
+Pic is SUV.jpeg,Identified as pickup, pickup truck,and the score is:0.2281610667705536
+Pic is tiger_lion.jpeg,Identified as tiger, Panthera tigris,and the score is:0.6159482002258301
+Pic is vegetables.jpeg,Identified as strawberry,and the score is:0.2322154939174652
+"""
