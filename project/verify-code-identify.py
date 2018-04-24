@@ -17,11 +17,10 @@ LOG_DIR = tools.makedir_logs(os.path.basename(__file__)[:-3])
 # 获取随机字符串
 def get_random_string(length=4):
     return ''.join(
-            [random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(length)])
+            [random.choice(string.digits) for _ in range(length)])
 
 
-IMG_PATH = os.path.join(LOG_DIR, 'img')
-tools.makedir(IMG_PATH)
+created,IMG_PATH =tools.makedir(os.path.join(LOG_DIR, 'images'))
 
 
 # 生成验证码
@@ -32,16 +31,13 @@ def gen_captcha_image():
     image.write(captcha_txt, os.path.join(IMG_PATH, '{}.jpg'.format(captcha_txt)))
 
 
-"""
 #生成10000个验证码
 num=10000
-if __name__ == '__main__':
+if created:
     for i in range(num):
         gen_captcha_image()
         print('Creating image %d/%d' % (i+1,num))
-        
-"""
-
+    
 
 ######################生成tfrecord文件#########################
 
@@ -63,8 +59,7 @@ _RANDOM_SEED = 0
 # 数据集路径：IMG_PATH
 
 # tfrecord文件存放路径
-TF_RECORD_DIR = tools.makedir(os.path.join(LOG_DIR, 'tfrecord'))
-
+created,TF_RECORD_DIR = tools.makedir(os.path.join(LOG_DIR, 'tfrecord'))
 
 # 判断tfrecord文件是否存在
 def _dataset_exists(dataset_dir):
@@ -87,13 +82,16 @@ def _get_filenames_and_calsses(dataset_dir):
 def bytes_feature(values):
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[values]))
 
+def int64_feature(values):
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[values]))
+
 def image_to_tfexample(image_data, label0, label1, label2, label3):
     return tf.train.Example(features=tf.train.Features(feature={
         'image' : bytes_feature(image_data),
-        'label0': bytes_feature(label0),
-        'label1': bytes_feature(label1),
-        'label2': bytes_feature(label2),
-        'label3': bytes_feature(label3),
+        'label0': int64_feature(label0),
+        'label1': int64_feature(label1),
+        'label2': int64_feature(label2),
+        'label3': int64_feature(label3),
     }))
 
 
@@ -122,7 +120,7 @@ def _convert_dataset(split_name, filenames, dataset_dir):
                     labels_string = filename.split('/')[-1][0:4]
                     labels = []
                     for i in range(4):
-                        labels.append(labels_string[i].encode('utf-8'))
+                        labels.append(int(labels_string[i]))
                     
                     # 生成protocol数据类型
                     example = image_to_tfexample(image_data,labels[0],labels[1],labels[2],labels[3])
@@ -154,5 +152,16 @@ else:
     
     
 ##########################验证码失败主要代码##############################
-    
+
+"""
+验证码识别方法一
+将label转化成一维向量进行分类，与手写数字识别类似
+
+
+识别方法二
+Multi-task Learning 交替训练
+
+
+
+"""
     
