@@ -101,3 +101,7 @@ ENV/
 .mypy_cache/
 
 logs/
+
+inception/
+
+.DS_Store

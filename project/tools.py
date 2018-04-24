@@ -16,7 +16,11 @@ def makedir_logs(dir_name):
 	return path
 	
 
-
+def makedir(path):
+	if not os.path.exists(path):
+		os.makedirs(path)
+		print('Created dir:{}'.format(path))
+	return path
 
 
 def delete_dir_file(path,name):
