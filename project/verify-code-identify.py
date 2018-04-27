@@ -178,6 +178,8 @@ BATCH_SIZE = 25
 # tfrecord文件存放路径
 TFRECORD_FILE = os.path.join(LOG_DIR,'tfrecord/train.tfrecords')
 
+MODEL_SAVE_PATH=os.path.join(LOG_DIR,'model/chptcha.model')
+
 # placeholder
 x = tf.placeholder(tf.float32, [None, 224, 224])
 y0 = tf.placeholder(tf.float32, [None])
@@ -308,7 +310,7 @@ with tf.Session() as sess:
             # 保存模型
             # if acc0 > 0.90 and acc1 > 0.90 and acc2 > 0.90 and acc3 > 0.90:
             if i == 6000:
-                saver.save(sess, "./captcha/models/crack_captcha.model", global_step=i)
+                saver.save(sess, MODEL_SAVE_PATH, global_step=i)
                 break
                 
                 # 通知其他线程关闭
