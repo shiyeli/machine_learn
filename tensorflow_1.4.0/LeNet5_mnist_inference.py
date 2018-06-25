@@ -69,19 +69,10 @@ def inference(input_tensor, train, regularizer):
         pool2 = tf.nn.max_pool(relu2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
         
         
-        # 将pool2中的图片展开，注意第一维是batch,pool2_shape[0]为一批次中数据的个数
-
-    """
-    pool2_shape=pool2.get_shape().as_list()
-    
-    TypeError: Failed to convert object of type <type 'list'> to Tensor.
-    Contents: [None, 3136].
-    Consider casting elements to a supported type.
-    """
-    # pool2_shape = pool2.get_shape().as_list()
-    pool2_shape = tf.shape(pool2)
+    # 将pool2中的图片展开，注意第一维是batch,pool2_shape[0]为一批次中数据的个数
+    pool2_shape = pool2.get_shape().as_list()
     nodes = pool2_shape[1] * pool2_shape[2] * pool2_shape[3]
-    reshaped = tf.reshape(pool2, [pool2_shape[0], nodes])
+    reshaped = tf.reshape(pool2, [-1, nodes])
     
     
     # 第五层（全连接第一层）

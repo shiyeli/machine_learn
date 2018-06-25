@@ -107,3 +107,5 @@ inception/
 .DS_Store
 
 MNIST_data/
+
+tmp/
