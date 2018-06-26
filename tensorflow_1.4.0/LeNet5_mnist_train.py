@@ -13,7 +13,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 
 BATCH_SIZE = 100
-LEARNING_RATE_BASE = 0.8
+LEARNING_RATE_BASE = 0.6
 LEARNING_RATE_DECAY = 0.99
 REGULARAZTION_RATE = 0.0001
 TRAINING_STEPS = 30000
