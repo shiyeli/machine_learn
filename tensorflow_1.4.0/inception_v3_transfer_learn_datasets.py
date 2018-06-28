@@ -24,6 +24,7 @@ POOL_3_RESHAPE_NAME = 'pool_3/_reshape:0'
 # 读取inception-v3.pd
 INCEPTION_V3_PD = 'tmp/inception_v3/classify_image_graph_def.pb'
 
+IS_TEST=True
 
 def get_datasets():
     sub_dirs = [_[0] for _ in os.walk(FLOWER_PHOTOS_PATH)][1:]
@@ -42,6 +43,13 @@ def get_datasets():
         file_names = glob.glob(sub_dir + '/*.jpg')
         images.extend(file_names)
         labels.extend(np.full(len(file_names), index))
+        
+        if IS_TEST:
+            images=images[:2]
+            labels=labels[:2]
+            break
+        
+    
     
     # 乱序
     state = np.random.get_state()
@@ -103,6 +111,7 @@ def get_pool_3_reshape_sigal_image_values(sess, pool3_reshape_tensor, image_path
     return pool3_reshape_value
 
 
+
 if __name__ == '__main__':
     images, labels = get_datasets()
     
@@ -110,5 +119,7 @@ if __name__ == '__main__':
         images_2048 = get_pool_3_reshape_values(sess, images)
     
     labels_one_hot = get_labels_one_hot(labels)
-    processed_data = np.array([images_2048, labels_one_hot])
-    np.save(OUTPUT_FILE, processed_data)
+    processed_data = np.array([np.array(images_2048), np.array(labels_one_hot)])
+    # np.save(OUTPUT_FILE, processed_data)
+    
+    print np.array(images_2048).shape,np.array(labels_one_hot).shape
