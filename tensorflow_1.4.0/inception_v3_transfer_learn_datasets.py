@@ -121,5 +121,6 @@ if __name__ == '__main__':
     labels_one_hot = get_labels_one_hot(labels)
     processed_data = np.array([np.array(images_2048), np.array(labels_one_hot)])
     # np.save(OUTPUT_FILE, processed_data)
+    #明天用TFRecord存储数据
     
     print np.array(images_2048).shape,np.array(labels_one_hot).shape
