@@ -70,9 +70,9 @@ def get_datasets():
 
 # 将数据转化成自定义全连接网络可用数据
 
-def get_labels_one_hot(labels):
-    one_hot = np.eye(NUM_CLASS)
-    labels_one_hot = np.apply_along_axis(lambda x: one_hot[x], 0, labels)
+def labels2one_hot(labels):
+    one_hot = np.eye(NUM_CLASS,dtype=int)
+    labels_one_hot = map(lambda x:list(one_hot[x]),labels)
     return labels_one_hot
 
 
@@ -110,8 +110,7 @@ def get_pool_3_reshape_sigal_image_values(sess, pool3_reshape_tensor, image_path
     pool3_reshape_value = sess.run(pool3_reshape_tensor, feed_dict={
         'import/DecodeJpeg/contents:0': image_raw_data
     })
-
-    return pool3_reshape_value
+    return pool3_reshape_value.tolist()
 
 
 def get_images_2048(images):
@@ -141,4 +140,65 @@ if __name__ == '__main__':
     np.save(OUTPUT_FILE_TRAIN, train_datasets)
     np.save(OUTPUT_FILE_TEST, test_datasets)
     
+
+
+#以下为获取数据代码
+
+class lazy(object):
+    def __init__(self, func):
+        self.func = func
     
+    def __get__(self, instance, cls):
+        val = self.func(instance)
+        setattr(instance, self.func.__name__, val)
+        return val
+
+
+class Datasets(object):
+    
+    def __init__(self,is_train):
+        self._index_in_epoch=0
+        self._datasets_path=OUTPUT_FILE_TRAIN if is_train else OUTPUT_FILE_TEST
+        self._images=self._datasets[0]
+        self._labels=self._datasets[1]
+        self._num_examples=len(self._labels)
+    
+    @property
+    def datasets(self):
+        images=map(lambda x: np.squeeze(x), self._images)
+        labels=labels2one_hot(self._labels)
+        return images,labels
+    
+    @lazy
+    def _datasets(self):
+        images,labels=np.load(self._datasets_path)
+        
+        # images=map(lambda x: np.squeeze(x), images)
+        # labels=labels2one_hot(labels)
+        return images,labels
+
+
+    def next_batch(self,batch_size):
+        start=self._index_in_epoch
+        self._index_in_epoch+=batch_size
+        
+        if self._index_in_epoch > self._num_examples:
+            perm=np.arange(self._num_examples)
+            np.random.shuffle(perm)
+            self._images=self._images[perm]
+            self._labels=self._labels[perm]
+            
+            start=0
+            self._index_in_epoch=batch_size
+            assert batch_size<=self._num_examples
+            
+        end=self._index_in_epoch
+        _images=map(lambda x: np.squeeze(x), self._images[start:end])
+        _labels=labels2one_hot(self._labels[start:end])
+        return _images,_labels
+    
+    
+        
+        
+    
+
