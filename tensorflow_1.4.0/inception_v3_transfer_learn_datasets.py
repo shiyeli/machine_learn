@@ -13,10 +13,11 @@ from tensorflow.python.platform import gfile
 import tensorflow as tf
 
 FLOWER_PHOTOS_PATH = 'flower_photos'
-TEST_ACCOUNT = 1000
+TRAIN_ACCOUNT = 3000
 
 NUM_CLASS = 5
-OUTPUT_FILE = 'flower_photos/flower_processed.npy'
+OUTPUT_FILE_TRAIN = 'flower_photos/train_datasets.npy'
+OUTPUT_FILE_TEST = 'flower_photos/test_datasets.npy'
 
 DECODE_JPEG_CONTENTS = 'DecodeJpeg/contents:0'
 POOL_3_RESHAPE_NAME = 'pool_3/_reshape:0'
@@ -123,7 +124,10 @@ if __name__ == '__main__':
     images_2048.shape=[None,1,2048]
     labels.shape=[None,1]
     """
-    processed_data = np.asarray([images_2048,labels])
-    np.save(OUTPUT_FILE, processed_data)
+    train_datasets = np.asarray([images_2048[:TRAIN_ACCOUNT],labels[:TRAIN_ACCOUNT]])
+    test_datasets = np.asarray([images_2048[TRAIN_ACCOUNT:],labels[TRAIN_ACCOUNT:]])
+
+    np.save(OUTPUT_FILE_TRAIN, train_datasets)
+    np.save(OUTPUT_FILE_TEST, test_datasets)
     
     
