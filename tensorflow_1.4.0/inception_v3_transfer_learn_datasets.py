@@ -78,6 +78,7 @@ def get_labels_one_hot(labels):
 
 def get_pool_3_reshape_values(sess, images):
     """
+    :param images 图片路径数组
     通过inception-v3，将图片处理成pool_3_reshape数据，以供自定义全连接网络训练使用
     """
     with tf.gfile.FastGFile(INCEPTION_V3_PD, 'rb') as f:
@@ -112,6 +113,18 @@ def get_pool_3_reshape_sigal_image_values(sess, pool3_reshape_tensor, image_path
 
     return pool3_reshape_value
 
+
+def get_images_2048(images):
+    """
+    通过inception-v3获取pool_3_reshape节点特征
+    :param images: 图片路径
+    :type images: array
+    :return: array
+    :rtype: [None,1,2048]
+    """
+    with tf.Session() as sess:
+        images_2048 = get_pool_3_reshape_values(sess, images)
+    return images_2048
 
 
 if __name__ == '__main__':
