@@ -130,9 +130,7 @@ def get_images_2048(images):
 if __name__ == '__main__':
     images, labels = get_datasets()
     
-    with tf.Session() as sess:
-        images_2048 = get_pool_3_reshape_values(sess, images)
-    
+    images_2048 = get_images_2048(images)
     """
     images_2048.shape=[None,1,2048]
     labels.shape=[None,1]
