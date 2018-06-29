@@ -24,7 +24,7 @@ POOL_3_RESHAPE_NAME = 'pool_3/_reshape:0'
 # 读取inception-v3.pd
 INCEPTION_V3_PD = 'tmp/inception_v3/classify_image_graph_def.pb'
 
-IS_TEST=True
+IS_TEST=False
 
 def get_datasets():
     sub_dirs = [_[0] for _ in os.walk(FLOWER_PHOTOS_PATH)][1:]
@@ -45,8 +45,8 @@ def get_datasets():
         labels.extend(np.full(len(file_names), index))
         
         if IS_TEST:
-            images=images[:2]
-            labels=labels[:2]
+            images=images[:5]
+            labels=labels[:5]
             break
         
     
@@ -100,14 +100,15 @@ def get_pool_3_reshape_values(sess, images):
 def get_pool_3_reshape_sigal_image_values(sess, pool3_reshape_tensor, image_path):
     image_raw_data = gfile.FastGFile(image_path, 'rb').read()
     #     image_data=tf.image.decode_jpeg(image_raw_data)
-    pool3_reshape_value = sess.run(pool3_reshape_tensor, feed_dict={
-        'import/DecodeJpeg/contents:0': image_raw_data
-    })
 
     """
     注意获取到的tensor会默认加上import/，在feed_dict时候需要加上否则
     计算图上无法找到
     """
+    pool3_reshape_value = sess.run(pool3_reshape_tensor, feed_dict={
+        'import/DecodeJpeg/contents:0': image_raw_data
+    })
+
     return pool3_reshape_value
 
 
@@ -118,9 +119,11 @@ if __name__ == '__main__':
     with tf.Session() as sess:
         images_2048 = get_pool_3_reshape_values(sess, images)
     
-    labels_one_hot = get_labels_one_hot(labels)
-    processed_data = np.array([np.array(images_2048), np.array(labels_one_hot)])
-    # np.save(OUTPUT_FILE, processed_data)
-    #明天用TFRecord存储数据
+    """
+    images_2048.shape=[None,1,2048]
+    labels.shape=[None,1]
+    """
+    processed_data = np.asarray([images_2048,labels])
+    np.save(OUTPUT_FILE, processed_data)
     
-    print np.array(images_2048).shape,np.array(labels_one_hot).shape
+    
