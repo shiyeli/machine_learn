@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     images_2048 = get_images_2048(images)
     """
-    images_2048.shape=[None,1,2048]
+    images_2048.shape=[None,2048]
     labels.shape=[None,1]
     """
     train_datasets = np.asarray([images_2048[:TRAIN_ACCOUNT], labels[:TRAIN_ACCOUNT]])
