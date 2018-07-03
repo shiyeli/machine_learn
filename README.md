@@ -1,2 +1,2 @@
-# machine_learn
-Some practice about machine learn.
+# deep_learn
+Some practice about deep learn (Tensorflow).
