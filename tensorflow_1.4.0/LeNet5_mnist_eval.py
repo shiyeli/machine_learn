@@ -14,7 +14,7 @@ import LeNet5_mnist_train as mnist_train
 import LeNet5_mnist_inference as mnist_inference
 
 # 每10秒加载一次最新的模型，并在测试数据上测试正确率
-EVAL_INTERVAL_SECS = 50
+EVAL_INTERVAL_SECS = 30
 
 
 def evaluate(mnist):
@@ -67,3 +67,5 @@ def main(argv=None):
 
 if __name__ == '__main__':
     tf.app.run()
+    
+    

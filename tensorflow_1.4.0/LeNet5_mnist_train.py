@@ -12,11 +12,11 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 
-BATCH_SIZE = 100
-LEARNING_RATE_BASE = 0.6
-LEARNING_RATE_DECAY = 0.99
+BATCH_SIZE = 50
+LEARNING_RATE_BASE = 0.05
+LEARNING_RATE_DECAY = 0.3
 REGULARAZTION_RATE = 0.0001
-TRAINING_STEPS = 30000
+TRAINING_STEPS = 10000
 MOVING_AVERAGE_DECAY = 0.99
 
 MODEL_SAVE_PATH = './tmp/LeNet5/'
@@ -67,11 +67,11 @@ def train(mnist):
                 mnist_inference.IMAGE_SIZE,
                 mnist_inference.NUM_CHANNELS
             ])
-            _, loss_value, step = sess.run([train_op, loss, global_step], feed_dict={x: reshaped_xs, y_: ys})
+            _, loss_value, step ,_learning_rate= sess.run([train_op, loss, global_step,learning_rate], feed_dict={x: reshaped_xs, y_: ys})
 
             # 每1000轮保存一次模型
-            if i % 1000 == 0:
-                print 'After %d training steps,loss=%f' % (step, loss_value)
+            if (i+1) % 500 == 0:
+                print 'After %d training steps,loss=%f,learning_rate=%f' % (step, loss_value,_learning_rate)
 
                 # 保存模型
                 saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME), global_step=step)
@@ -91,3 +91,30 @@ if __name__ == '__main__':
     # tf.get_variable_scope().reuse_variables()
 
     tf.app.run()
+
+
+"""
+After 500 training steps,loss=0.878618,learning_rate=0.028958
+After 1000 training steps,loss=0.853497,learning_rate=0.016753
+After 1500 training steps,loss=0.801199,learning_rate=0.009692
+After 2000 training steps,loss=0.705418,learning_rate=0.005607
+After 2500 training steps,loss=0.719921,learning_rate=0.003244
+After 3000 training steps,loss=0.685588,learning_rate=0.001877
+After 3500 training steps,loss=0.731382,learning_rate=0.001086
+After 4000 training steps,loss=0.632257,learning_rate=0.000628
+After 4500 training steps,loss=0.700597,learning_rate=0.000363
+After 5000 training steps,loss=0.659599,learning_rate=0.000210
+After 5500 training steps,loss=0.721710,learning_rate=0.000122
+After 6000 training steps,loss=0.663642,learning_rate=0.000070
+After 6500 training steps,loss=0.689002,learning_rate=0.000041
+After 7000 training steps,loss=0.644999,learning_rate=0.000024
+After 7500 training steps,loss=0.660535,learning_rate=0.000014
+After 8000 training steps,loss=0.753764,learning_rate=0.000008
+After 8500 training steps,loss=0.775101,learning_rate=0.000005
+After 9000 training steps,loss=0.762689,learning_rate=0.000003
+After 9500 training steps,loss=0.871014,learning_rate=0.000002
+After 10000 training steps,loss=0.655120,learning_rate=0.000001
+
+
+After 10000 training steps,accuracy=0.982400
+"""
