@@ -100,16 +100,15 @@ ENV/
 # mypy
 .mypy_cache/
 
-logs/
 
-inception/
 
 .DS_Store
+.idea
 
+logs/
+inception/
 MNIST_data/
-
 tmp/
-
 flower_photos/
 
 

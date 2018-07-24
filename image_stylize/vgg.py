@@ -182,12 +182,12 @@ def vgg_16(inputs,
       net = slim.max_pool2d(net, [2, 2], scope='pool3')
       net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv4')
       out4=net
-      net = slim.max_pool2d(net, [2, 2], scope='pool4')
-      net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv5')
-      out5=net
-      net = slim.max_pool2d(net, [2, 2], scope='pool5')
+      
 
       """
+      net = slim.max_pool2d(net, [2, 2], scope='pool4')
+      net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv5')
+      net = slim.max_pool2d(net, [2, 2], scope='pool5')
 
       # Use conv2d instead of fully_connected layers.
       net = slim.conv2d(net, 4096, [7, 7], padding=fc_conv_padding, scope='fc6')
@@ -214,7 +214,7 @@ def vgg_16(inputs,
       exclude = ['vgg_16/fc6', 'vgg_16/pool4', 'vgg_16/conv5', 'vgg_16/pool5', 'vgg_16/fc7', 'vgg_16/global_pool',
                  'vgg_16/fc8/squeezed', 'vgg_16/fc8']
 
-      return out1, out2, out3, out4,out5, exclude
+      return out1, out2, out3, out4, exclude
       
       
 vgg_16.default_image_size = 224
